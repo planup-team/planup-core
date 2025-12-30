@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/api/schedules")
@@ -20,11 +21,17 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<ScheduleDetailDto> createSchedule(
-        @RequestBody ScheduleCreateDto dto
+        @RequestBody ScheduleCreateDto request
     ) {
         // @TODO: Replace with authenticated user ID
-        var schedule = scheduleService.saveSchedule(UUID.randomUUID(), dto);
+        var schedule = scheduleService.saveSchedule(UUID.randomUUID(), request);
         return ResponseEntity.status(201).body(schedule);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleSummaryDto>> getAllSchedules() {
+        var summary = scheduleService.getAllSchedules();
+        return ResponseEntity.ok(summary);
     }
 
     @GetMapping("/{scheduleId}")
@@ -35,20 +42,12 @@ public class ScheduleController {
         return ResponseEntity.ok(schedule);
     }
 
-    @GetMapping("/{scheduleId}/summary")
-    public ResponseEntity<ScheduleSummaryDto> getScheduleSummary(
-        @PathVariable UUID scheduleId
-    ) {
-        var summary = scheduleService.getScheduleSummary(scheduleId);
-        return ResponseEntity.ok(summary);
-    }
-
     @PutMapping("/{scheduleId}")
     public ResponseEntity<ScheduleDetailDto> updateSchedule(
         @PathVariable UUID scheduleId,
-        @RequestBody ScheduleUpdateDto dto
+        @RequestBody ScheduleUpdateDto request
     ) {
-        var updated = scheduleService.updateSchedule(scheduleId, dto);
+        var updated = scheduleService.updateSchedule(scheduleId, request);
         return ResponseEntity.ok(updated);
     }
 

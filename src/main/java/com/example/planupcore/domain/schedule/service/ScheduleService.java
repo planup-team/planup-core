@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 /*
@@ -25,15 +26,15 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     @Transactional
-    public ScheduleDetailDto saveSchedule(UUID userId, ScheduleCreateDto dto) {
+    public ScheduleDetailDto saveSchedule(UUID userId, ScheduleCreateDto request) {
         var schedule = Schedule.create(
             userId,
-            dto.title(),
-            dto.description(),
-            dto.startTime(),
-            dto.endTime(),
-            dto.scheduleType(),
-            dto.movable()
+            request.title(),
+            request.description(),
+            request.startTime(),
+            request.endTime(),
+            request.scheduleType(),
+            request.movable()
         );
 
         var newSchedule = scheduleRepository.save(schedule);
@@ -48,22 +49,23 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ScheduleSummaryDto getScheduleSummary(UUID scheduleId) {
-        var schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
-        return ScheduleSummaryDto.fromEntity(schedule);
+    public List<ScheduleSummaryDto> getAllSchedules() {
+        var schedule = scheduleRepository.findAll();
+        return schedule.stream()
+                .map(ScheduleSummaryDto::fromEntity)
+                .toList();
     }
 
     @Transactional
-    public ScheduleDetailDto updateSchedule(UUID scheduleId, ScheduleUpdateDto dto) {
+    public ScheduleDetailDto updateSchedule(UUID scheduleId, ScheduleUpdateDto request) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
 
-        schedule.changeTitle(dto.title());
-        schedule.changeDescription(dto.description());
-        schedule.changeScheduleType(dto.scheduleType());
-        schedule.changeMovable(dto.movable());
-        schedule.reschedule(dto.startTime(), dto.endTime());
+        schedule.changeTitle(request.title());
+        schedule.changeDescription(request.description());
+        schedule.changeScheduleType(request.scheduleType());
+        schedule.changeMovable(request.movable());
+        schedule.reschedule(request.startTime(), request.endTime());
 
         return ScheduleDetailDto.fromEntity(schedule);
     }
