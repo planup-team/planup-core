@@ -21,7 +21,7 @@ public class Schedule {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column(nullable = false, columnDefinition = "uuid")
+    @Column(name = "user_id", nullable = false, columnDefinition = "uuid")
     private UUID userId;
 
     @Column(nullable = false)
@@ -29,20 +29,20 @@ public class Schedule {
 
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
+    @Column(name = "schedule_type", nullable = false)
     private ScheduleType scheduleType;
 
     @Column(nullable = false)
     private boolean movable;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     protected Schedule() {}
@@ -64,22 +64,6 @@ public class Schedule {
         this.scheduleType = scheduleType;
         this.movable = movable;
     };
-
-    public void changeTitle(String title) {
-        this.title = title;
-    }
-
-    public void changeDescription(String description) {
-        this.description = description;
-    }
-
-    public void changeScheduleType(ScheduleType scheduleType) {
-        this.scheduleType = scheduleType;
-    }
-
-    public void changeMovable(boolean movable) {
-        this.movable = movable;
-    }
 
     public static Schedule create(
         UUID userId,
@@ -103,6 +87,22 @@ public class Schedule {
             scheduleType,
             movable
         );
+    }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changeScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType;
+    }
+
+    public void changeMovable(boolean movable) {
+        this.movable = movable;
     }
 
     public void reschedule(LocalDateTime newStart, LocalDateTime newEnd) {
