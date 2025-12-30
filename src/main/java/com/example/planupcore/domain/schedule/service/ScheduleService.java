@@ -41,42 +41,37 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ScheduleDetailDto getScheduleDetail(Long scheduleId) {
+    public ScheduleDetailDto getScheduleDetail(UUID scheduleId) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
         return ScheduleDetailDto.fromEntity(schedule);
     }
 
     @Transactional(readOnly = true)
-    public ScheduleSummaryDto getScheduleSummary(Long scheduleId) {
+    public ScheduleSummaryDto getScheduleSummary(UUID scheduleId) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
         return ScheduleSummaryDto.fromEntity(schedule);
     }
 
     @Transactional
-    public ScheduleDetailDto updateSchedule(Long scheduleId, ScheduleUpdateDto dto) {
+    public ScheduleDetailDto updateSchedule(UUID scheduleId, ScheduleUpdateDto dto) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
 
-        schedule.update(
-            dto.title(),
-            dto.description(),
-            dto.startTime(),
-            dto.endTime(),
-            dto.scheduleType(),
-            dto.movable()
-        );
+        schedule.changeTitle(dto.title());
+        schedule.changeDescription(dto.description());
+        schedule.changeScheduleType(dto.scheduleType());
+        schedule.changeMovable(dto.movable());
+        schedule.reschedule(dto.startTime(), dto.endTime());
 
-        var updatedSchedule = scheduleRepository.save(schedule);
-        return ScheduleDetailDto.fromEntity(updatedSchedule);
+        return ScheduleDetailDto.fromEntity(schedule);
     }
 
     @Transactional
-    public void deleteSchedule(Long scheduleId) {
-        if (!scheduleRepository.existsById(scheduleId)) {
-            throw new RuntimeException("Schedule not found with id: " + scheduleId);
-        }
-        scheduleRepository.deleteById(scheduleId);
+    public void deleteSchedule(UUID scheduleId) {
+        var schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
+        scheduleRepository.delete(schedule);
     }
 }

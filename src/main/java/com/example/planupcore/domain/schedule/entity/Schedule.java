@@ -2,6 +2,7 @@ package com.example.planupcore.domain.schedule.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -64,6 +65,22 @@ public class Schedule {
         this.movable = movable;
     };
 
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changeScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = scheduleType;
+    }
+
+    public void changeMovable(boolean movable) {
+        this.movable = movable;
+    }
+
     public static Schedule create(
         UUID userId,
         String title,
@@ -73,6 +90,10 @@ public class Schedule {
         ScheduleType scheduleType,
         boolean movable
     ) {
+        if (startTime.isAfter(endTime)) {
+            throw new IllegalArgumentException("startTime > endTime");
+        }
+
         return new Schedule(
             userId,
             title,
@@ -84,19 +105,20 @@ public class Schedule {
         );
     }
 
-    public void update(
-        String title,
-        String description,
-        LocalDateTime startTime,
-        LocalDateTime endTime,
-        ScheduleType scheduleType,
-        boolean movable
-    ) {
-        this.title = title;
-        this.description = description;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.scheduleType = scheduleType;
-        this.movable = movable;
+    public void reschedule(LocalDateTime newStart, LocalDateTime newEnd) {
+        if (startTime.equals(newStart) && endTime.equals(newEnd)) {
+            return;
+        }
+
+        if (!movable) {
+            throw new IllegalStateException("Schedule is not movable");
+        }
+
+        if (newStart.isAfter(newEnd)) {
+            throw new IllegalArgumentException("startTime > endTime");
+        }
+
+        this.startTime = newStart;
+        this.endTime = newEnd;
     }
 }

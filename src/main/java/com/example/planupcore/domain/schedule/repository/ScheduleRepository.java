@@ -3,5 +3,7 @@ package com.example.planupcore.domain.schedule.repository;
 import com.example.planupcore.domain.schedule.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+import java.util.UUID;
+
+public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 }

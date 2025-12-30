@@ -29,7 +29,7 @@ public class ScheduleController {
 
     @GetMapping("/{scheduleId}")
     public ResponseEntity<ScheduleDetailDto> getScheduleDetail(
-        @PathVariable Long scheduleId
+        @PathVariable UUID scheduleId
     ) {
         var schedule = scheduleService.getScheduleDetail(scheduleId);
         return ResponseEntity.ok(schedule);
@@ -37,7 +37,7 @@ public class ScheduleController {
 
     @GetMapping("/{scheduleId}/summary")
     public ResponseEntity<ScheduleSummaryDto> getScheduleSummary(
-        @PathVariable Long scheduleId
+        @PathVariable UUID scheduleId
     ) {
         var summary = scheduleService.getScheduleSummary(scheduleId);
         return ResponseEntity.ok(summary);
@@ -45,7 +45,7 @@ public class ScheduleController {
 
     @PutMapping("/{scheduleId}")
     public ResponseEntity<ScheduleDetailDto> updateSchedule(
-        @PathVariable Long scheduleId,
+        @PathVariable UUID scheduleId,
         @RequestBody ScheduleUpdateDto dto
     ) {
         var updated = scheduleService.updateSchedule(scheduleId, dto);
@@ -54,7 +54,7 @@ public class ScheduleController {
 
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
-        @PathVariable Long scheduleId
+        @PathVariable UUID scheduleId
     ) {
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
