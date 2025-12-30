@@ -24,7 +24,7 @@ public class ScheduleController {
         @RequestBody ScheduleCreateDto request
     ) {
         // @TODO: Replace with authenticated user ID
-        var schedule = scheduleService.saveSchedule(UUID.randomUUID(), request);
+        var schedule = scheduleService.createSchedule(UUID.randomUUID(), request);
         return ResponseEntity.status(201).body(schedule);
     }
 
@@ -35,10 +35,10 @@ public class ScheduleController {
     }
 
     @GetMapping("/{scheduleId}")
-    public ResponseEntity<ScheduleDetailDto> getScheduleDetail(
+    public ResponseEntity<ScheduleDetailDto> getScheduleById(
         @PathVariable UUID scheduleId
     ) {
-        var schedule = scheduleService.getScheduleDetail(scheduleId);
+        var schedule = scheduleService.getScheduleById(scheduleId);
         return ResponseEntity.ok(schedule);
     }
 

@@ -26,7 +26,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     @Transactional
-    public ScheduleDetailDto saveSchedule(UUID userId, ScheduleCreateDto request) {
+    public ScheduleDetailDto createSchedule(UUID userId, ScheduleCreateDto request) {
         var schedule = Schedule.create(
             userId,
             request.title(),
@@ -42,7 +42,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ScheduleDetailDto getScheduleDetail(UUID scheduleId) {
+    public ScheduleDetailDto getScheduleById(UUID scheduleId) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found with id: " + scheduleId));
         return ScheduleDetailDto.fromEntity(schedule);
