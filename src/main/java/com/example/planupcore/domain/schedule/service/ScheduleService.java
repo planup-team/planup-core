@@ -26,9 +26,7 @@ public class ScheduleService {
             request.title(),
             request.description(),
             request.startTime(),
-            request.endTime(),
-            request.scheduleType(),
-            request.movable()
+            request.endTime()
         );
 
         var newSchedule = scheduleRepository.save(schedule);
@@ -57,8 +55,6 @@ public class ScheduleService {
 
         schedule.changeTitle(request.title());
         schedule.changeDescription(request.description());
-        schedule.changeScheduleType(request.scheduleType());
-        schedule.changeMovable(request.movable());
         schedule.reschedule(request.startTime(), request.endTime());
 
         return ScheduleDetailDto.fromEntity(schedule);

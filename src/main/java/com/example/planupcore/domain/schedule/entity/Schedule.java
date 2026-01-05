@@ -35,12 +35,6 @@ public class Schedule {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column(name = "schedule_type", nullable = false)
-    private ScheduleType scheduleType;
-
-    @Column(nullable = false)
-    private boolean movable;
-
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,17 +46,13 @@ public class Schedule {
         String title,
         String description,
         LocalDateTime startTime,
-        LocalDateTime endTime,
-        ScheduleType scheduleType,
-        boolean movable
+        LocalDateTime endTime
     ) {
         this.userId = userId;
         this.title = title;
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.scheduleType = scheduleType;
-        this.movable = movable;
     };
 
     public static Schedule create(
@@ -70,9 +60,7 @@ public class Schedule {
         String title,
         String description,
         LocalDateTime startTime,
-        LocalDateTime endTime,
-        ScheduleType scheduleType,
-        boolean movable
+        LocalDateTime endTime
     ) {
         if (startTime.isAfter(endTime)) {
             throw new IllegalArgumentException("startTime > endTime");
@@ -83,9 +71,7 @@ public class Schedule {
             title,
             description,
             startTime,
-            endTime,
-            scheduleType,
-            movable
+            endTime
         );
     }
 
@@ -97,21 +83,9 @@ public class Schedule {
         this.description = description;
     }
 
-    public void changeScheduleType(ScheduleType scheduleType) {
-        this.scheduleType = scheduleType;
-    }
-
-    public void changeMovable(boolean movable) {
-        this.movable = movable;
-    }
-
     public void reschedule(LocalDateTime newStart, LocalDateTime newEnd) {
         if (startTime.equals(newStart) && endTime.equals(newEnd)) {
             return;
-        }
-
-        if (!movable) {
-            throw new IllegalStateException("Schedule is not movable");
         }
 
         if (newStart.isAfter(newEnd)) {
