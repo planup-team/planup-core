@@ -11,7 +11,9 @@ public record ScheduleCreateDto(
     @NotBlank(message = "Description is required")
     String description,
 
+    @NotBlank(message = "Start time is required")
     LocalDateTime startTime,
 
+    @NotBlank(message = "End time is required")
     LocalDateTime endTime
 ) {}

@@ -6,6 +6,7 @@ import com.example.planupcore.domain.schedule.dto.ScheduleCreateDto;
 import com.example.planupcore.domain.schedule.dto.ScheduleDetailDto;
 import com.example.planupcore.domain.schedule.dto.ScheduleSummaryDto;
 import com.example.planupcore.global.advice.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<ScheduleDetailDto> createSchedule(
-        @RequestBody ScheduleCreateDto request
+        @RequestBody @Valid ScheduleCreateDto request
     ) {
         var schedule = scheduleService.createSchedule(UUID.randomUUID(), request);
         return ResponseEntity.status(201).body(schedule);
@@ -45,7 +46,7 @@ public class ScheduleController {
     @PutMapping("/{scheduleId}")
     public ResponseEntity<ScheduleDetailDto> updateSchedule(
         @PathVariable UUID scheduleId,
-        @RequestBody ScheduleUpdateDto request
+        @RequestBody @Valid ScheduleUpdateDto request
     ) {
         var updated = scheduleService.updateSchedule(scheduleId, request);
         return ResponseEntity.ok(updated);

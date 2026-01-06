@@ -4,6 +4,7 @@ import com.example.planupcore.domain.user.dto.UserCreateDto;
 import com.example.planupcore.domain.user.dto.UserDetailDto;
 import com.example.planupcore.domain.user.dto.UserSummaryDto;
 import com.example.planupcore.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDetailDto> createUser(@RequestBody UserCreateDto request) {
+    public ResponseEntity<UserDetailDto> createUser(
+        @RequestBody @Valid UserCreateDto request
+    ) {
         var user = userService.createUser(request);
         return ResponseEntity.status(201).body(user);
     }
@@ -31,7 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailDto> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserDetailDto> getUserById(
+        @PathVariable UUID id
+    ) {
         var user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
@@ -39,14 +44,16 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDetailDto> updateUser(
         @PathVariable UUID id,
-        @RequestBody UserCreateDto request
+        @RequestBody @Valid UserCreateDto request
     ) {
         var updatedUser = userService.updateUser(id, request);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteUser(
+        @PathVariable UUID id
+    ) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
