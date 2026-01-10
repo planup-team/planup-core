@@ -55,9 +55,30 @@ public class ScheduleService {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ApiException(ErrorCode.SCHEDULE_NOT_FOUND));
 
-        schedule.changeTitle(request.title());
-        schedule.changeDescription(request.description());
-        schedule.reschedule(request.startTime(), request.endTime());
+        var changed = false;
+
+        if (request.title() != null) {
+            schedule.changeTitle(request.title());
+            changed = true;
+        }
+
+        if (request.description() != null) {
+            schedule.changeDescription(request.description());
+            changed = true;
+        }
+
+        if (request.startTime() != null || request.endTime() != null) {
+            if (request.startTime() == null || request.endTime() == null) {
+                throw new ApiException(ErrorCode.INVALID_SCHEDULE_TIME);
+            }
+
+            schedule.reschedule(request.startTime(), request.endTime());
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new ApiException(ErrorCode.NO_UPDATE_FIELD);
+        }
 
         return ScheduleDetailDto.fromEntity(schedule);
     }
