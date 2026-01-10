@@ -56,18 +56,32 @@ public class UserService {
             .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         var password = request.password();
-        if (!passwordEncoder.matches(password, user.getHashedPassword())) {
+        if (password == null
+            || !passwordEncoder.matches(password, user.getHashedPassword())
+        ) {
             throw new ApiException(ErrorCode.INVALID_PASSWORD);
         }
 
-        user.changeEmail(request.email());
-        user.changeNickname(request.nickname());
-        user.changeFirstName(request.firstName());
-        user.changeLastName(request.lastName());
+        var changed = applyChanges(
+            user,
+            request.email(),
+            request.nickname(),
+            request.firstName(),
+            request.lastName()
+        );
 
         var newPassword = request.newPassword();
-        if (newPassword != null && !newPassword.isBlank()) {
+        if (newPassword != null) {
+            if (newPassword.isBlank()) {
+                throw new ApiException(ErrorCode.INVALID_NEW_PASSWORD);
+            }
             user.changePassword(passwordEncoder.encode(newPassword));
+
+            changed = true;
+        }
+
+        if (!changed) {
+            throw new ApiException(ErrorCode.NO_UPDATE_FIELD);
         }
 
         return UserDetailDto.fromEntity(user);
@@ -78,10 +92,17 @@ public class UserService {
         var user = userRepository.findById(targetId)
             .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
-        user.changeEmail(request.email());
-        user.changeNickname(request.nickname());
-        user.changeFirstName(request.firstName());
-        user.changeLastName(request.lastName());
+        var changed = applyChanges(
+            user,
+            request.email(),
+            request.nickname(),
+            request.firstName(),
+            request.lastName()
+        );
+
+        if (!changed) {
+            throw new ApiException(ErrorCode.NO_UPDATE_FIELD);
+        }
 
         return UserDetailDto.fromEntity(user);
     }
@@ -98,5 +119,31 @@ public class UserService {
         var user = userRepository.findById(targetId)
             .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
+    }
+
+    private boolean applyChanges(User user, String email, String nickname, String firstName, String lastName) {
+        var changed = false;
+
+        if (email != null) {
+            user.changeEmail(email);
+            changed = true;
+        }
+
+        if (nickname != null) {
+            user.changeNickname(nickname);
+            changed = true;
+        }
+
+        if (firstName != null) {
+            user.changeFirstName(firstName);
+            changed = true;
+        }
+
+        if (lastName != null) {
+            user.changeLastName(lastName);
+            changed = true;
+        }
+
+        return changed;
     }
 }
