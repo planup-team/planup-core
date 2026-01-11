@@ -31,8 +31,8 @@ public class ScheduleService {
             request.endTime()
         );
 
-        var newSchedule = scheduleRepository.save(schedule);
-        return ScheduleDetailDto.fromEntity(newSchedule);
+        var savedSchedule = scheduleRepository.save(schedule);
+        return ScheduleDetailDto.fromEntity(savedSchedule);
     }
 
     @Transactional(readOnly = true)
